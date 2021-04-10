@@ -1,5 +1,4 @@
-console.log('likeRecommends script');
-
+const MAX_PHOTOS = 23;
 const photoSelector = 'a[href^="/p/"]';
 
 let processedPhotos = [];
@@ -13,7 +12,7 @@ const getPhotosUrls = photoEls => {
     return urls;
 };
 
-const getNoProcessedPhotos = (newUrlsList = []) => {
+const getUnprocessedPhotos = (newUrlsList = []) => {
     const result = [];
     newUrlsList.forEach(url => {
         if (processedPhotos.indexOf(url) === -1) {
@@ -46,14 +45,14 @@ const likePhoto = () => {
             likeBtn.click();
         }
     } catch (error) {
-        console.log('error like');
+        console.log('%cerror like', 'color: orange');
     }
 };
 
 const likePhotos = async nextPhotoUrls => {
     return new Promise(resolve => {
-        const photosUrls = getNoProcessedPhotos(nextPhotoUrls);
-        console.log('local session:', photosUrls.join(', '));
+        const photosUrls = getUnprocessedPhotos(nextPhotoUrls);
+        console.log(`%clocal session: ${photosUrls.join(', ')}`, 'color: forestgreen');
 
         const iterator = function* () {
             yield* photosUrls;
@@ -65,45 +64,56 @@ const likePhotos = async nextPhotoUrls => {
             const { value: url, done } = it.next();
             if (!done) {
                 console.log(`like ${url}...`);
+
                 processedPhotos.push(url);
+
                 openPhotoViewer(url);
                 await sleep(1000, 'delay before like');
+
                 likePhoto();
                 await sleep(1000, 'delay before closing viewer');
-                closePhotoViewer();
-                await sleep(1000, 'delay after close viewer');
-                console.log(`complete like ${url}, total ${processedPhotos.length}`);
 
-                likeNext();
+                closePhotoViewer();
+                console.log(`%ccomplete like ${url}, total ${processedPhotos.length}`, 'color: fuchsia');
+                await sleep(1000, 'delay after close viewer');
+
+                if (processedPhotos.length < MAX_PHOTOS) {
+                    likeNext();
+                } else {
+                    resolve({ maximumReached: true });
+                }
             } else {
-                console.log('end local session');
-                resolve()
+                
+                resolve({ pageProcessed: true });
             }
         };
 
         likeNext();
     });
-    
 };
 
 const run = async () => {
-    console.log('run likeRecommends script...');
-    let partsCount = 0;
+    console.log('%crun likeRecommends script...', 'color: blue');
+    let page = 0;
     
     const likeNextPhotosPart = async () => {
-        partsCount++;
+        page++;
 
-        await sleep(3000, 'waiting loading resources');
+        await sleep(3000, `waiting loading resources of page ${page}`);
         const photos = document.querySelectorAll(photoSelector);
         const photosUrls = getPhotosUrls(photos);
 
-        await likePhotos(photosUrls);
+        const { maximumReached, pageProcessed } = await likePhotos(photosUrls);
 
-        if (partsCount <= 3) {
+        if (pageProcessed) {
+            console.log(`%cpage ${page} have been processed`, 'color: blueviolet');
+        }
+
+        if (!maximumReached) {
             scrollDown();
             likeNextPhotosPart();
         } else {
-            console.log(`likeRecommends script complete!, total ${processedPhotos.length}`);
+            console.log(`%cFINISH: likeRecommends script complete, total ${processedPhotos.length}`, 'color: green');
         }
     };
 
