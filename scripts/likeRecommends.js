@@ -36,15 +36,19 @@ const closePhotoViewer = () => {
 };
 
 const likePhoto = () => {
+    let result = false;
     try {
         const likeBtn = document.querySelector('section.ltpMr > span.fr66n > button.wpO6b');
         const iconLikeBtn = likeBtn.querySelector('svg[aria-label="Нравится"]');
         if (iconLikeBtn) {
             likeBtn.click();
+            console.log('%cclick on heart', 'color: orangered');
+            result = true;
         }
     } catch (error) {
         console.log('%cerror like', 'color: orange');
     }
+    return result;
 };
 
 const likePhotos = async nextPhotoUrls => {
@@ -66,14 +70,18 @@ const likePhotos = async nextPhotoUrls => {
                 processedPhotos.push(url);
 
                 openPhotoViewer(url);
-                await sleep(1200, 'delay before like');
+                await sleep(1200, 'before like');
 
-                likePhoto();
-                await sleep(1000, 'delay before closing viewer');
+                const liked = likePhoto();
+
+                if (liked) {
+                    await sleep(1000, 'before closing viewer');
+                    console.log(`%cprocessing completed ${url}, total ${processedPhotos.length}`, 'color: fuchsia');
+                } else {
+                    console.log(`%cphoto ${url} has already been liked, total ${processedPhotos.length}`, 'color: lightcoral');
+                }
 
                 closePhotoViewer();
-                console.log(`%cprocessing completed ${url}, total ${processedPhotos.length}`, 'color: fuchsia');
-                await sleep(1000, 'delay after close viewer');
 
                 if (processedPhotos.length < MAX_PHOTOS) {
                     likeNext();
@@ -121,6 +129,6 @@ const run = async () => {
 run();
 
 // TODO:
-// - если пролайкано уже - сразу закрывать без задержки
 // - обрабатывать фэйл при открытиии вьювера
 // - попробовать обрабатывать 429 статус
+// - рандомно добавлять комменты?
