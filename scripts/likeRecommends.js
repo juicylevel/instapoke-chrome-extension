@@ -1,4 +1,4 @@
-const MAX_PHOTOS = 23;
+const MAX_PHOTOS = 35;
 const photoSelector = 'a[href^="/p/"]';
 
 let processedPhotos = [];
@@ -52,7 +52,7 @@ const likePhoto = () => {
 const likePhotos = async nextPhotoUrls => {
     return new Promise(resolve => {
         const photosUrls = getUnprocessedPhotos(nextPhotoUrls);
-        console.log(`%clocal session: ${photosUrls.join(', ')}`, 'color: forestgreen');
+        console.log(`%clocal session: ${photosUrls.join(', ')}, count: ${photosUrls.length}`, 'color: forestgreen');
 
         const iterator = function* () {
             yield* photosUrls;
