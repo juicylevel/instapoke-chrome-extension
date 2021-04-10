@@ -1,4 +1,4 @@
-const MAX_PHOTOS = 35;
+const MAX_PHOTOS = 200;
 const photoSelector = 'a[href^="/p/"]';
 
 let processedPhotos = [];
@@ -27,8 +27,6 @@ const openPhotoViewer = href => {
     if (photoEl) {
         photoEl.click();
         console.log(`click on photo ${href}`);
-    } else {
-        reject();
     }
 };
 
@@ -68,7 +66,7 @@ const likePhotos = async nextPhotoUrls => {
                 processedPhotos.push(url);
 
                 openPhotoViewer(url);
-                await sleep(1000, 'delay before like');
+                await sleep(1200, 'delay before like');
 
                 likePhoto();
                 await sleep(1000, 'delay before closing viewer');
@@ -121,3 +119,8 @@ const run = async () => {
 };
 
 run();
+
+// TODO:
+// - если пролайкано уже - сразу закрывать без задержки
+// - обрабатывать фэйл при открытиии вьювера
+// - попробовать обрабатывать 429 статус
