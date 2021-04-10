@@ -19,7 +19,8 @@
         },
         {
             "matches": [
-                "https://www.instagram.com/explore/"
+                "https://www.instagram.com/explore/",
+                "https://www.instagram.com/explore/tags/*/"
             ],
             "js": [
                 "scripts/constants.js",

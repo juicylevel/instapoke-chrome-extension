@@ -52,7 +52,7 @@ const likePhoto = () => {
 const likePhotos = async nextPhotoUrls => {
     return new Promise(resolve => {
         const photosUrls = getUnprocessedPhotos(nextPhotoUrls);
-        console.log(`%clocal session: ${photosUrls.join(', ')}, count: ${photosUrls.length}`, 'color: forestgreen');
+        console.log(`%cstart page session: ${photosUrls.join(', ')}, count: ${photosUrls.length}`, 'color: forestgreen');
 
         const iterator = function* () {
             yield* photosUrls;
@@ -74,7 +74,7 @@ const likePhotos = async nextPhotoUrls => {
                 await sleep(1000, 'delay before closing viewer');
 
                 closePhotoViewer();
-                console.log(`%ccomplete like ${url}, total ${processedPhotos.length}`, 'color: fuchsia');
+                console.log(`%cprocessing completed ${url}, total ${processedPhotos.length}`, 'color: fuchsia');
                 await sleep(1000, 'delay after close viewer');
 
                 if (processedPhotos.length < MAX_PHOTOS) {
