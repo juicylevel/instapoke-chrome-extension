@@ -1,5 +1,5 @@
-const MAX_PHOTOS = 200;
-const photoSelector = 'a[href^="/p/"]';
+const MAX_PHOTOS = 500;
+const PHOTO_SELECTOR = 'a[href^="/p/"]';
 
 let processedPhotos = [];
 
@@ -51,8 +51,11 @@ const likePhoto = () => {
     return result;
 };
 
-const likePhotos = async nextPhotoUrls => {
+const likePhotos = async () => {
     return new Promise(resolve => {
+        const photos = document.querySelectorAll(PHOTO_SELECTOR);
+        const nextPhotoUrls = getPhotosUrls(photos);
+
         const photosUrls = getUnprocessedPhotos(nextPhotoUrls);
         console.log(`%cstart page session: ${photosUrls.join(', ')}, count: ${photosUrls.length}`, 'color: forestgreen');
 
@@ -70,12 +73,12 @@ const likePhotos = async nextPhotoUrls => {
                 processedPhotos.push(url);
 
                 openPhotoViewer(url);
-                await sleep(1200, 'before like');
+                await sleep(2000, 'before like');
 
                 const liked = likePhoto();
 
                 if (liked) {
-                    await sleep(1000, 'before closing viewer');
+                    await sleep(2000, 'before closing viewer');
                     console.log(`%cprocessing completed ${url}, total ${processedPhotos.length}`, 'color: fuchsia');
                 } else {
                     console.log(`%cphoto ${url} has already been liked, total ${processedPhotos.length}`, 'color: lightcoral');
@@ -89,7 +92,6 @@ const likePhotos = async nextPhotoUrls => {
                     resolve({ maximumReached: true });
                 }
             } else {
-                
                 resolve({ pageProcessed: true });
             }
         };
@@ -100,16 +102,15 @@ const likePhotos = async nextPhotoUrls => {
 
 const run = async () => {
     console.log('%crun likeRecommends script...', 'color: blue');
+
     let page = 0;
     
     const likeNextPhotosPart = async () => {
         page++;
 
-        await sleep(3000, `waiting loading resources of page ${page}`);
-        const photos = document.querySelectorAll(photoSelector);
-        const photosUrls = getPhotosUrls(photos);
+        await sleep(3000, `waiting loading photos ${page}`);
 
-        const { maximumReached, pageProcessed } = await likePhotos(photosUrls);
+        const { maximumReached, pageProcessed } = await likePhotos();
 
         if (pageProcessed) {
             console.log(`%cpage ${page} have been processed`, 'color: blueviolet');
@@ -130,5 +131,5 @@ run();
 
 // TODO:
 // - обрабатывать фэйл при открытиии вьювера
-// - попробовать обрабатывать 429 статус
 // - рандомно добавлять комменты?
+// - ожидать загрузку страницы по onLoad?

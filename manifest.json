@@ -20,7 +20,8 @@
         {
             "matches": [
                 "https://www.instagram.com/explore/",
-                "https://www.instagram.com/explore/tags/*/"
+                "https://www.instagram.com/explore/tags/*/",
+                "https://www.instagram.com/*/?hl=ru"
             ],
             "js": [
                 "scripts/constants.js",
@@ -28,5 +29,9 @@
                 "scripts/likeRecommends.js"
             ]
         }
-    ]
+    ],
+    "action": {
+        "default_title": "Instapoke!",
+        "default_popup": "index.html"
+    }
 }
