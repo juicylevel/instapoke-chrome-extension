@@ -32,6 +32,6 @@
     ],
     "action": {
         "default_title": "Instapoke!",
-        "default_popup": "index.html"
+        "default_popup": "popup/build/index.html"
     }
 }
